@@ -723,6 +723,18 @@ td {
 //  SO SCHEDULE FRONTEND  —  app.js (embedded)
 // ════════════════════════════════════════════════════════
 
+/* ── AUTO RESET via ?reset=1 ──────────────────────── */
+(function(){
+  const p = new URLSearchParams(window.location.search);
+  if(p.get('reset')==='1'){
+    localStorage.clear();
+    // Hapus ?reset=1 dari URL lalu reload bersih
+    const clean = window.location.pathname;
+    window.history.replaceState({},'',clean);
+    window.location.reload();
+  }
+})();
+
 /* ── CONFIG ───────────────────────────────────────── */
 let GAS_URL = localStorage.getItem('gas_url') || '';
 const MONTHS_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
