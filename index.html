@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SO Schedule System — Sportindo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet"/>
+<style>
+/* ── CSS VARIABLES ─────────────────────────────────── */
+:root {
+  --bg:        #0a0d14;
+  --bg2:       #0f1520;
+  --bg3:       #141c2a;
+  --border:    #1e2d44;
+  --accent:    #2563eb;
+  --accent2:   #3b82f6;
+  --accent3:   #60a5fa;
+  --gold:      #f59e0b;
+  --gold2:     #fbbf24;
+  --green:     #10b981;
+  --red:       #ef4444;
+  --orange:    #f97316;
+  --text:      #e2e8f0;
+  --text2:     #94a3b8;
+  --text3:     #475569;
+  --sidebar-w: 220px;
+  --header-h:  64px;
+  --radius:    10px;
+  --shadow:    0 4px 24px rgba(0,0,0,.5);
+}
+
+/* ── RESET ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ─────────────────────────────────────── */
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius:3px; }
+
+/* ── LAYOUT ────────────────────────────────────────── */
+#app { display:flex; height:100vh; overflow:hidden; }
+
+/* ── SIDEBAR ───────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  position: relative;
+  z-index: 10;
+}
+
+.sidebar-logo {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo .logo-icon {
+  width: 36px; height:36px;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  border-radius: 9px;
+  display: flex; align-items:center; justify-content:center;
+  font-size:18px; margin-bottom:10px;
+}
+.sidebar-logo h1 {
+  font-family:'Syne',sans-serif;
+  font-size:13px; font-weight:800;
+  letter-spacing:.08em; text-transform:uppercase;
+  color: var(--text);
+}
+.sidebar-logo span {
+  font-size:10px; color:var(--text3);
+  font-family:'DM Mono',monospace;
+}
+
+.sidebar-section {
+  padding: 12px 10px 4px;
+  font-size:9px; font-weight:600;
+  letter-spacing:.12em; text-transform:uppercase;
+  color: var(--text3);
+}
+
+.sidebar-nav { padding: 4px 8px; }
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor:pointer;
+  font-size:13px; font-weight:500;
+  color: var(--text2);
+  transition: all .18s;
+  margin-bottom:2px;
+  position:relative;
+}
+.nav-item:hover { background:var(--bg3); color:var(--text); }
+.nav-item.active {
+  background: linear-gradient(90deg, rgba(37,99,235,.18), transparent);
+  color: var(--accent3);
+  border-left:2px solid var(--accent);
+}
+.nav-item .icon { font-size:15px; width:20px; text-align:center; flex-shrink:0; }
+.nav-item .badge {
+  margin-left:auto;
+  background: var(--accent);
+  color:#fff; font-size:9px; font-weight:700;
+  padding: 1px 5px; border-radius:99px;
+  min-width:18px; text-align:center;
+}
+.nav-item .badge.zero { background:var(--bg3); color:var(--text3); }
+
+.sidebar-months { padding:4px 8px 16px; }
+.month-btn {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 8px 10px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:12.5px; font-weight:500;
+  color:var(--text2);
+  transition:all .18s;
+  margin-bottom:1px;
+}
+.month-btn:hover { background:var(--bg3); color:var(--text); }
+.month-btn.active {
+  background: linear-gradient(90deg, rgba(245,158,11,.12), transparent);
+  color: var(--gold2);
+  border-left:2px solid var(--gold);
+}
+.month-btn .m-count {
+  font-family:'DM Mono',monospace;
+  font-size:10px; color:var(--text3);
+  background:var(--bg3); padding:1px 6px; border-radius:99px;
+}
+.month-btn.active .m-count { color:var(--gold); background:rgba(245,158,11,.15); }
+
+.sidebar-footer {
+  margin-top:auto;
+  padding:12px 12px;
+  border-top:1px solid var(--border);
+  font-size:10px; color:var(--text3);
+  font-family:'DM Mono',monospace;
+}
+
+/* ── MAIN ──────────────────────────────────────────── */
+.main {
+  flex:1; display:flex; flex-direction:column;
+  overflow:hidden;
+}
+
+/* ── HEADER ────────────────────────────────────────── */
+.header {
+  height: var(--header-h);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display:flex; align-items:center;
+  padding: 0 24px;
+  gap:16px;
+  flex-shrink:0;
+}
+.header-title {
+  font-family:'Syne',sans-serif;
+  font-size:18px; font-weight:700;
+  flex:1;
+}
+.header-title span { color:var(--accent3); }
+.header-actions { display:flex; gap:8px; align-items:center; }
+.year-selector {
+  background:var(--bg3); border:1px solid var(--border);
+  color:var(--text); font-family:'DM Mono',monospace;
+  font-size:13px; padding:6px 10px; border-radius:7px;
+  cursor:pointer; outline:none;
+}
+.btn {
+  padding:7px 14px; border-radius:8px;
+  font-size:12.5px; font-weight:600;
+  cursor:pointer; border:none; outline:none;
+  display:flex; align-items:center; gap:6px;
+  transition:all .18s;
+  font-family:'DM Sans',sans-serif;
+}
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:var(--accent2); transform:translateY(-1px); }
+.btn-gold { background:var(--gold); color:#000; }
+.btn-gold:hover { background:var(--gold2); transform:translateY(-1px); }
+.btn-ghost {
+  background:transparent; color:var(--text2);
+  border:1px solid var(--border);
+}
+.btn-ghost:hover { background:var(--bg3); color:var(--text); }
+.btn-danger { background:var(--red); color:#fff; }
+.btn-success { background:var(--green); color:#fff; }
+.btn-sm { padding:5px 10px; font-size:11px; }
+
+/* ── CONTENT AREA ──────────────────────────────────── */
+.content {
+  flex:1; overflow-y:auto;
+  padding:24px;
+}
+
+/* ── STATS CARDS ───────────────────────────────────── */
+.stats-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-bottom:24px;
+}
+.stat-card {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px;
+  position:relative;
+  overflow:hidden;
+  transition:transform .2s;
+}
+.stat-card:hover { transform:translateY(-2px); }
+.stat-card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0;
+  height:3px;
+}
+.stat-card.blue::before  { background:var(--accent); }
+.stat-card.gold::before  { background:var(--gold); }
+.stat-card.green::before { background:var(--green); }
+.stat-card.red::before   { background:var(--red); }
+.stat-label {
+  font-size:11px; font-weight:500;
+  color:var(--text3); letter-spacing:.05em;
+  text-transform:uppercase; margin-bottom:8px;
+}
+.stat-value {
+  font-family:'Syne',sans-serif;
+  font-size:32px; font-weight:800;
+  line-height:1;
+}
+.stat-sub {
+  font-size:11px; color:var(--text3); margin-top:6px;
+}
+
+/* ── MONTH OVERVIEW BAR ────────────────────────────── */
+.month-overview {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:var(--radius); padding:20px;
+  margin-bottom:24px;
+}
+.section-title {
+  font-family:'Syne',sans-serif;
+  font-size:14px; font-weight:700;
+  margin-bottom:14px;
+  display:flex; align-items:center; gap:8px;
+  color:var(--text);
+}
+.section-title::after {
+  content:''; flex:1; height:1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+.progress-months {
+  display:grid; grid-template-columns:repeat(6,1fr); gap:8px;
+}
+.prog-cell {
+  background:var(--bg3); border-radius:7px;
+  padding:10px 8px; cursor:pointer;
+  transition:all .2s; border:1px solid transparent;
+  text-align:center;
+}
+.prog-cell:hover { border-color:var(--accent); transform:scale(1.03); }
+.prog-cell.active { border-color:var(--gold); background:rgba(245,158,11,.08); }
+.prog-cell .pc-month { font-size:10px; font-weight:600; color:var(--text3); margin-bottom:5px; }
+.prog-cell .pc-num { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; }
+.prog-cell .pc-bar {
+  height:3px; border-radius:2px; margin-top:5px;
+  background: var(--bg); overflow:hidden;
+}
+.prog-cell .pc-bar-fill { height:100%; border-radius:2px; transition:width .6s; }
+
+/* ── DATA TABLE SECTION ────────────────────────────── */
+.table-section {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden;
+}
+
+.table-header {
+  padding:16px 20px;
+  display:flex; align-items:center; gap:12px;
+  border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.table-header .th-title {
+  font-family:'Syne',sans-serif;
+  font-size:15px; font-weight:700;
+  flex:1;
+}
+.search-box {
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:7px; padding:6px 12px;
+  display:flex; align-items:center; gap:8px;
+  width:220px;
+}
+.search-box input {
+  background:none; border:none; outline:none;
+  color:var(--text); font-size:12.5px; font-family:'DM Sans',sans-serif;
+  width:100%;
+}
+.search-box input::placeholder { color:var(--text3); }
+.filter-sel {
+  background:var(--bg3); border:1px solid var(--border);
+  color:var(--text); font-size:12px; font-family:'DM Sans',sans-serif;
+  padding:6px 10px; border-radius:7px; outline:none; cursor:pointer;
+}
+
+.table-wrap { overflow-x:auto; }
+table {
+  width:100%; border-collapse:collapse;
+  font-size:12.5px;
+}
+thead th {
+  background:var(--bg3);
+  padding:10px 14px;
+  text-align:left;
+  font-family:'DM Mono',monospace;
+  font-size:10px; font-weight:500;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:var(--text3);
+  border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+thead th.sortable { cursor:pointer; }
+thead th.sortable:hover { color:var(--text2); }
+tbody tr {
+  border-bottom:1px solid rgba(30,45,68,.6);
+  transition:background .15s;
+}
+tbody tr:hover { background:var(--bg3); }
+tbody tr:last-child { border-bottom:none; }
+td {
+  padding:10px 14px;
+  vertical-align:middle;
+}
+.site-code {
+  font-family:'DM Mono',monospace;
+  font-size:11px; font-weight:500;
+  background:rgba(37,99,235,.12);
+  color:var(--accent3);
+  padding:2px 7px; border-radius:5px;
+  white-space:nowrap;
+}
+.store-name { font-weight:500; }
+.cat-badge {
+  font-size:9.5px; font-weight:600;
+  padding:2px 7px; border-radius:99px;
+  letter-spacing:.04em; white-space:nowrap;
+}
+.status-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:10.5px; font-weight:600;
+  padding:3px 9px; border-radius:99px;
+  white-space:nowrap;
+}
+.status-badge::before {
+  content:''; width:5px; height:5px;
+  border-radius:50%; flex-shrink:0;
+}
+.st-SCHEDULED { background:rgba(37,99,235,.15); color:var(--accent3); }
+.st-SCHEDULED::before { background:var(--accent3); }
+.st-COMPLETED { background:rgba(16,185,129,.15); color:var(--green); }
+.st-COMPLETED::before { background:var(--green); }
+.st-CANCELLED { background:rgba(239,68,68,.12); color:var(--red); }
+.st-CANCELLED::before { background:var(--red); }
+.st-PENDING { background:rgba(249,115,22,.15); color:var(--orange); }
+.st-PENDING::before { background:var(--orange); }
+
+.table-footer {
+  padding:12px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-top:1px solid var(--border);
+  font-size:12px; color:var(--text3);
+  flex-wrap:wrap; gap:8px;
+}
+.pagination { display:flex; gap:4px; }
+.pg-btn {
+  width:28px; height:28px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:6px; cursor:pointer;
+  border: 1px solid var(--border);
+  background:var(--bg3); color:var(--text2);
+  font-size:12px; transition:all .15s;
+  font-family:'DM Mono',monospace;
+}
+.pg-btn:hover { border-color:var(--accent); color:var(--accent3); }
+.pg-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.pg-btn:disabled { opacity:.3; cursor:not-allowed; }
+
+/* ── MODAL ─────────────────────────────────────────── */
+.modal-overlay {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  z-index:100;
+  opacity:0; pointer-events:none;
+  transition:opacity .25s;
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:14px; padding:28px;
+  width:500px; max-width:90vw;
+  max-height:90vh; overflow-y:auto;
+  transform:translateY(20px);
+  transition:transform .25s;
+  box-shadow:var(--shadow);
+}
+.modal-overlay.open .modal { transform:translateY(0); }
+.modal-title {
+  font-family:'Syne',sans-serif;
+  font-size:17px; font-weight:700;
+  margin-bottom:22px;
+  display:flex; align-items:center; gap:10px;
+}
+.modal-close {
+  margin-left:auto; background:none; border:none;
+  color:var(--text3); cursor:pointer; font-size:18px;
+  padding:2px 6px; border-radius:5px;
+}
+.modal-close:hover { background:var(--bg3); color:var(--text); }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.form-group { display:flex; flex-direction:column; gap:6px; }
+.form-group.full { grid-column:1/-1; }
+.form-label { font-size:11px; font-weight:600; color:var(--text3); letter-spacing:.05em; text-transform:uppercase; }
+.form-input, .form-select, .form-textarea {
+  background:var(--bg3); border:1px solid var(--border);
+  color:var(--text); font-family:'DM Sans',sans-serif;
+  font-size:13px; padding:8px 12px; border-radius:8px;
+  outline:none; transition:border-color .2s;
+  width:100%;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color:var(--accent);
+}
+.form-textarea { resize:vertical; min-height:70px; }
+.form-actions {
+  display:flex; gap:8px; justify-content:flex-end;
+  margin-top:20px;
+}
+
+/* ── AUTO GENERATE MODAL ───────────────────────────── */
+.auto-gen-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  margin:16px 0;
+}
+.info-box {
+  background:rgba(37,99,235,.08); border:1px solid rgba(37,99,235,.25);
+  border-radius:8px; padding:12px;
+  font-size:12px; color:var(--accent3);
+  margin:12px 0;
+}
+.info-box strong { display:block; margin-bottom:4px; font-size:13px; }
+
+/* ── TOAST ─────────────────────────────────────────── */
+.toast-container {
+  position:fixed; bottom:20px; right:20px;
+  z-index:999; display:flex; flex-direction:column; gap:8px;
+}
+.toast {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:10px; padding:12px 16px;
+  display:flex; align-items:center; gap:10px;
+  font-size:13px; box-shadow:var(--shadow);
+  min-width:240px; max-width:340px;
+  animation:slideIn .3s ease;
+  border-left:3px solid var(--accent);
+}
+.toast.success { border-left-color:var(--green); }
+.toast.error { border-left-color:var(--red); }
+.toast.warning { border-left-color:var(--gold); }
+.toast-icon { font-size:16px; flex-shrink:0; }
+.toast-msg { flex:1; }
+@keyframes slideIn { from { transform:translateX(100%); opacity:0; } to { transform:none; opacity:1; } }
+
+/* ── LOADING ───────────────────────────────────────── */
+.loading-overlay {
+  position:fixed; inset:0;
+  background:rgba(10,13,20,.85);
+  backdrop-filter:blur(4px);
+  z-index:200;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:12px;
+  opacity:0; pointer-events:none;
+  transition:opacity .25s;
+}
+.loading-overlay.show { opacity:1; pointer-events:all; }
+.spinner {
+  width:40px; height:40px;
+  border:3px solid var(--border);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-text { font-family:'DM Mono',monospace; font-size:12px; color:var(--text3); }
+
+/* ── CONFIG BANNER ─────────────────────────────────── */
+.config-banner {
+  background:linear-gradient(90deg, rgba(245,158,11,.12), rgba(37,99,235,.08));
+  border:1px solid rgba(245,158,11,.3);
+  border-radius:var(--radius); padding:16px 20px;
+  display:flex; align-items:center; gap:14px;
+  margin-bottom:20px;
+}
+.config-banner .cb-icon { font-size:24px; }
+.config-banner .cb-text { flex:1; }
+.config-banner .cb-text strong { display:block; font-size:13px; margin-bottom:3px; }
+.config-banner .cb-text span { font-size:11.5px; color:var(--text3); }
+.config-banner .cb-input {
+  flex:1; max-width:420px;
+  background:var(--bg3); border:1px solid var(--border);
+  color:var(--text); font-family:'DM Mono',monospace;
+  font-size:11.5px; padding:7px 12px; border-radius:7px;
+  outline:none;
+}
+.config-banner .cb-input:focus { border-color:var(--accent); }
+
+/* ── EMPTY STATE ───────────────────────────────────── */
+.empty-state {
+  text-align:center; padding:60px 20px;
+  color:var(--text3);
+}
+.empty-state .es-icon { font-size:48px; margin-bottom:12px; }
+.empty-state .es-title { font-family:'Syne',sans-serif; font-size:16px; margin-bottom:6px; color:var(--text2); }
+.empty-state .es-sub { font-size:13px; }
+
+/* ── ACTION BUTTONS IN TABLE ───────────────────────── */
+.action-btns { display:flex; gap:4px; }
+.icon-btn {
+  width:26px; height:26px;
+  border-radius:6px; border:1px solid var(--border);
+  background:var(--bg3); color:var(--text3);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:13px; transition:all .15s;
+}
+.icon-btn:hover { border-color:var(--accent); color:var(--accent3); background:rgba(37,99,235,.1); }
+.icon-btn.del:hover { border-color:var(--red); color:var(--red); background:rgba(239,68,68,.1); }
+.icon-btn.done:hover { border-color:var(--green); color:var(--green); background:rgba(16,185,129,.1); }
+
+/* ── RESPONSIVE ────────────────────────────────────── */
+@media(max-width:900px){
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+  .progress-months { grid-template-columns:repeat(4,1fr); }
+  .sidebar { width:180px; min-width:180px; }
+}
+@media(max-width:600px){
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .progress-months { grid-template-columns:repeat(3,1fr); }
+  .sidebar { display:none; }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">📦</div>
+      <h1>SO Schedule</h1>
+      <span>Sportindo &bull; v1.0</span>
+    </div>
+
+    <div class="sidebar-section">Menu</div>
+    <div class="sidebar-nav">
+      <div class="nav-item active" data-view="dashboard" onclick="switchView('dashboard')">
+        <span class="icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" data-view="all" onclick="switchView('all')">
+        <span class="icon">🗂️</span> Semua Schedule
+        <span class="badge" id="badge-all">0</span>
+      </div>
+      <div class="nav-item" data-view="sites" onclick="switchView('sites')">
+        <span class="icon">🏪</span> Daftar Toko
+        <span class="badge" id="badge-sites">174</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section" style="margin-top:8px">Bulan</div>
+    <div class="sidebar-months" id="sidebar-months">
+      <!-- Injected by JS -->
+    </div>
+
+    <div class="sidebar-footer">
+      SO Schedule System<br/>
+      <span id="footer-year"></span>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-title" id="header-title">
+        <span>Dashboard</span> SO Schedule
+      </div>
+      <div class="header-actions">
+        <select class="year-selector" id="year-sel" onchange="onYearChange()"></select>
+        <button class="btn btn-gold" onclick="openAutoGenModal()">⚡ Auto Generate</button>
+        <button class="btn btn-primary" onclick="openAddModal()">＋ Tambah</button>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="content" id="content">
+      <!-- Dynamic content here -->
+    </div>
+  </div>
+</div>
+
+<!-- CONFIG BANNER (GAS URL) -->
+<div id="config-section" style="display:none"></div>
+
+<!-- MODAL: ADD/EDIT -->
+<div class="modal-overlay" id="modal-add">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modal-add-title">➕ Tambah Schedule</span>
+      <button class="modal-close" onclick="closeModal('modal-add')">✕</button>
+    </div>
+    <div class="form-grid">
+      <input type="hidden" id="edit-id"/>
+      <div class="form-group">
+        <label class="form-label">Site Code</label>
+        <select class="form-select" id="add-site" onchange="onSiteSelect()"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nama Toko</label>
+        <input class="form-input" id="add-store" readonly placeholder="Otomatis"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bulan</label>
+        <select class="form-select" id="add-month"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tahun</label>
+        <input class="form-input" id="add-year" type="number"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tanggal SO</label>
+        <input class="form-input" id="add-date" type="date"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="add-status">
+          <option value="SCHEDULED">SCHEDULED</option>
+          <option value="COMPLETED">COMPLETED</option>
+          <option value="CANCELLED">CANCELLED</option>
+          <option value="PENDING">PENDING</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Catatan</label>
+        <textarea class="form-textarea" id="add-notes" placeholder="Opsional..."></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add')">Batal</button>
+      <button class="btn btn-primary" onclick="submitSchedule()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: AUTO GENERATE -->
+<div class="modal-overlay" id="modal-auto">
+  <div class="modal">
+    <div class="modal-title">
+      ⚡ Auto Generate Schedule
+      <button class="modal-close" onclick="closeModal('modal-auto')">✕</button>
+    </div>
+    <div class="info-box">
+      <strong>Apa itu Auto Generate?</strong>
+      Sistem akan membagi seluruh 174 toko secara otomatis ke 12 bulan dalam 1 tahun, dan memilih tanggal SO secara acak di minggu ke-3 setiap bulan.
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Tahun</label>
+        <input class="form-input" id="gen-year" type="number"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Toko per Bulan (maks)</label>
+        <input class="form-input" id="gen-per-month" type="number" value="15"/>
+      </div>
+    </div>
+    <div class="info-box" style="margin-top:4px">
+      <strong>Estimasi:</strong>
+      <span id="gen-estimate">174 toko ÷ 12 bulan ≈ 14–15 toko/bulan</span>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-auto')">Batal</button>
+      <button class="btn btn-gold" onclick="submitAutoGenerate()">⚡ Generate Sekarang</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toasts"></div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Memuat data...</div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  SO SCHEDULE FRONTEND  —  app.js (embedded)
+// ════════════════════════════════════════════════════════
+
+/* ── CONFIG ───────────────────────────────────────── */
+let GAS_URL = localStorage.getItem('gas_url') || '';
+const MONTHS_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const CAT_COLORS = {
+  LEAGUE:'#3b82f6',HUB:'#8b5cf6',ONLINE:'#06b6d4',
+  BUSINESS:'#f59e0b',BAZZAR:'#ec4899',SHIPPER:'#10b981',
+  TM:'#f97316',CHANDRA:'#84cc16','B-GRADE':'#a855f7',
+  UNSALEABLE:'#ef4444',GOLF:'#22d3ee',GRAMEDIA:'#fb923c',
+  'JO-HUB':'#c084fc',ECOM:'#2dd4bf',CITRUS:'#a3e635',
+  EXTERNAL:'#94a3b8',JACKCLOTH:'#f43f5e',DOCONLY:'#64748b',
+  ALTRAK:'#7c3aed',DEFAULT:'#475569'
+};
+
+/* ── STATE ────────────────────────────────────────── */
+let state = {
+  view: 'dashboard',
+  year: new Date().getFullYear(),
+  month: null,
+  sites: [],
+  schedules: [],
+  monthSummary: Array(12).fill(null).map((_,i)=>({month:i+1,total:0,scheduled:0,completed:0,cancelled:0})),
+  dashboard: {},
+  currentPage: 1,
+  pageSize: 20,
+  searchQ: '',
+  filterCat: '',
+  filterStatus: '',
+  sortCol: 'month',
+  sortDir: 1,
+  editMode: false
+};
+
+/* ── INIT ─────────────────────────────────────────── */
+async function init() {
+  buildYearSelector();
+  buildMonthSidebar();
+  buildSiteDropdown();
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+  document.getElementById('add-year').value = state.year;
+  document.getElementById('gen-year').value = state.year;
+
+  if (!GAS_URL) {
+    showConfigBanner();
+    renderView();
+    loadDemoData();
+    return;
+  }
+  showLoading('Menghubungkan ke server...');
+  try {
+    await loadDashboard();
+    await loadSchedules();
+    await loadSites();
+  } catch(e) {
+    toast('Gagal terhubung ke GAS. Mode demo aktif.','warning');
+    loadDemoData();
+  }
+  hideLoading();
+  renderView();
+}
+
+/* ── DEMO DATA ────────────────────────────────────── */
+function loadDemoData() {
+  // Generate demo schedules evenly spread over the year
+  const demoSites = ALL_SITES.slice(0,60);
+  const demo = [];
+  demoSites.forEach((s,i) => {
+    const m = (i % 12) + 1;
+    demo.push({
+      id:'DEMO-'+i,
+      site:s[0], storeName:s[1], month:m, year:state.year,
+      soDate:`${state.year}-${String(m).padStart(2,'0')}-${String(15+Math.floor(Math.random()*5)).padStart(2,'0')}`,
+      status:['SCHEDULED','SCHEDULED','COMPLETED','SCHEDULED','CANCELLED'][i%5],
+      notes:'Demo data', createdAt:'', updatedAt:''
+    });
+  });
+  state.schedules = demo;
+  updateMonthSummary();
+  updateBadges();
+  state.dashboard = {
+    totalSites:174, totalAll:demo.length,
+    totalScheduled:demo.filter(d=>d.status==='SCHEDULED').length,
+    totalCompleted:demo.filter(d=>d.status==='COMPLETED').length,
+    totalCancelled:demo.filter(d=>d.status==='CANCELLED').length,
+    monthSummary: state.monthSummary
+  };
+}
+
+function updateMonthSummary() {
+  state.monthSummary = MONTHS_ID.map((_,i)=>{
+    const items = state.schedules.filter(s=>parseInt(s.month)===(i+1));
+    return {
+      month:i+1, total:items.length,
+      scheduled:items.filter(s=>s.status==='SCHEDULED').length,
+      completed:items.filter(s=>s.status==='COMPLETED').length,
+      cancelled:items.filter(s=>s.status==='CANCELLED').length
+    };
+  });
+}
+
+/* ── API CALLS ────────────────────────────────────── */
+async function api(params) {
+  const qs = new URLSearchParams(params).toString();
+  const res = await fetch(`${GAS_URL}?${qs}`);
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  return await res.json();
+}
+async function apiPost(body) {
+  const res = await fetch(GAS_URL,{method:'POST',body:JSON.stringify(body)});
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  return await res.json();
+}
+
+async function loadDashboard() {
+  const d = await api({action:'getDashboard',year:state.year});
+  if(d.success){ state.dashboard=d; state.monthSummary=d.monthSummary||state.monthSummary; }
+}
+async function loadSchedules() {
+  const d = await api({action:'getSchedule',year:state.year});
+  if(d.success){ state.schedules=d.data; updateMonthSummary(); updateBadges(); }
+}
+async function loadSites() {
+  // Sites are embedded; but try API too
+  try {
+    const d = await api({action:'getSites'});
+    if(d.success && d.data.length) {
+      state.sites = d.data;
+      buildSiteDropdown();
+    }
+  } catch(e){}
+}
+
+/* ── BUILD YEAR SELECTOR ──────────────────────────── */
+function buildYearSelector() {
+  const sel = document.getElementById('year-sel');
+  const cur = new Date().getFullYear();
+  for(let y=cur-1;y<=cur+3;y++){
+    const o=document.createElement('option');
+    o.value=y; o.textContent=y;
+    if(y===state.year) o.selected=true;
+    sel.appendChild(o);
+  }
+}
+
+/* ── BUILD MONTH SIDEBAR ──────────────────────────── */
+function buildMonthSidebar() {
+  const el = document.getElementById('sidebar-months');
+  el.innerHTML = MONTHS_ID.map((m,i)=>`
+    <div class="month-btn ${state.month===(i+1)?'active':''}" onclick="selectMonth(${i+1})" id="mb-${i+1}">
+      <span>${m}</span>
+      <span class="m-count" id="mc-${i+1}">0</span>
+    </div>
+  `).join('');
+}
+
+function updateMonthBadges() {
+  MONTHS_ID.forEach((_,i)=>{
+    const ms = state.monthSummary[i];
+    const el = document.getElementById('mc-'+(i+1));
+    if(el) el.textContent = ms ? ms.total : 0;
+    const btn = document.getElementById('mb-'+(i+1));
+    if(btn){
+      btn.classList.toggle('active', state.month===(i+1));
+    }
+  });
+}
+
+function updateBadges() {
+  document.getElementById('badge-all').textContent = state.schedules.length;
+  updateMonthBadges();
+}
+
+/* ── BUILD SITE DROPDOWN ──────────────────────────── */
+function buildSiteDropdown() {
+  const sel = document.getElementById('add-site');
+  sel.innerHTML = '<option value="">— Pilih Site —</option>';
+  const list = state.sites.length ? state.sites.map(s=>[s.site,s.storeName]) : ALL_SITES;
+  list.forEach(s=>{
+    const o=document.createElement('option');
+    o.value=s[0]; o.textContent=`${s[0]} — ${s[1]}`;
+    o.dataset.store = s[1];
+    sel.appendChild(o);
+  });
+
+  const monthSel = document.getElementById('add-month');
+  monthSel.innerHTML = MONTHS_ID.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
+}
+
+function onSiteSelect() {
+  const sel = document.getElementById('add-site');
+  const opt = sel.options[sel.selectedIndex];
+  document.getElementById('add-store').value = opt.dataset.store || '';
+}
+
+/* ── VIEW SWITCHING ───────────────────────────────── */
+function switchView(v) {
+  state.view = v;
+  state.month = null;
+  state.currentPage = 1;
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.classList.toggle('active', n.dataset.view===v);
+  });
+  updateMonthBadges();
+  const titles = { dashboard:'Dashboard', all:'Semua Schedule', sites:'Daftar Toko' };
+  document.getElementById('header-title').innerHTML = `<span>${titles[v]||v}</span> SO Schedule`;
+  renderView();
+}
+
+function selectMonth(m) {
+  state.month = state.month===m ? null : m;
+  state.view = state.month ? 'month' : 'all';
+  state.currentPage = 1;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  updateMonthBadges();
+  document.getElementById('header-title').innerHTML =
+    state.month ? `<span>${MONTHS_ID[m-1]}</span> — Schedule SO` : `<span>Semua Schedule</span> SO`;
+  renderView();
+}
+
+/* ── RENDER VIEW ──────────────────────────────────── */
+function renderView() {
+  const content = document.getElementById('content');
+  if(state.view==='dashboard') content.innerHTML = renderDashboard();
+  else if(state.view==='sites') content.innerHTML = renderSitesView();
+  else content.innerHTML = renderScheduleView();
+
+  if(state.view==='dashboard') attachDashboardHandlers();
+}
+
+/* ── DASHBOARD ────────────────────────────────────── */
+function renderDashboard() {
+  const d = state.dashboard;
+  const ms = state.monthSummary;
+  const maxTotal = Math.max(...ms.map(m=>m.total),1);
+
+  return `
+    ${!GAS_URL ? renderConfigBanner() : ''}
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-label">Total Toko</div>
+        <div class="stat-value" style="color:var(--accent3)">${d.totalSites||174}</div>
+        <div class="stat-sub">Site aktif terdaftar</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-label">Total Schedule</div>
+        <div class="stat-value" style="color:var(--gold2)">${d.totalAll||state.schedules.length}</div>
+        <div class="stat-sub">Tahun ${state.year}</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Selesai (SO Done)</div>
+        <div class="stat-value" style="color:var(--green)">${d.totalCompleted||state.schedules.filter(s=>s.status==='COMPLETED').length}</div>
+        <div class="stat-sub">Status COMPLETED</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-label">Dibatalkan</div>
+        <div class="stat-value" style="color:var(--red)">${d.totalCancelled||state.schedules.filter(s=>s.status==='CANCELLED').length}</div>
+        <div class="stat-sub">Status CANCELLED</div>
+      </div>
+    </div>
+
+    <div class="month-overview">
+      <div class="section-title">📅 Overview Per Bulan — ${state.year}</div>
+      <div class="progress-months">
+        ${ms.map((m,i)=>{
+          const pct = maxTotal ? (m.total/maxTotal*100).toFixed(0) : 0;
+          const color = m.total===0?'var(--border)':m.completed===m.total&&m.total>0?'var(--green)':'var(--accent)';
+          return `<div class="prog-cell ${state.month===(i+1)?'active':''}" onclick="selectMonth(${i+1})">
+            <div class="pc-month">${MONTHS_ID[i].substr(0,3).toUpperCase()}</div>
+            <div class="pc-num" style="color:${m.total?'var(--text)':'var(--text3)'}">${m.total}</div>
+            <div class="pc-bar"><div class="pc-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="table-section">
+      <div class="table-header">
+        <div class="th-title">📋 Ringkasan Bulanan</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Bulan</th><th>Total</th><th>Scheduled</th><th>Completed</th><th>Cancelled</th><th>Aksi</th>
+          </tr></thead>
+          <tbody>
+            ${ms.map((m,i)=>`
+            <tr>
+              <td><strong>${MONTHS_ID[i]}</strong></td>
+              <td><span style="font-family:'DM Mono',monospace;font-weight:600">${m.total}</span></td>
+              <td><span class="status-badge st-SCHEDULED">${m.scheduled}</span></td>
+              <td><span class="status-badge st-COMPLETED">${m.completed}</span></td>
+              <td><span class="status-badge st-CANCELLED">${m.cancelled}</span></td>
+              <td>
+                <button class="btn btn-ghost btn-sm" onclick="selectMonth(${i+1})">Lihat Detail →</button>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+function attachDashboardHandlers(){}
+
+/* ── SCHEDULE VIEW ────────────────────────────────── */
+function renderScheduleView() {
+  let data = [...state.schedules];
+  if(state.month) data = data.filter(s=>parseInt(s.month)===state.month);
+  if(state.searchQ) {
+    const q = state.searchQ.toLowerCase();
+    data = data.filter(s => s.site.toLowerCase().includes(q)||s.storeName.toLowerCase().includes(q));
+  }
+  if(state.filterStatus) data = data.filter(s=>s.status===state.filterStatus);
+
+  // Sort
+  data.sort((a,b)=>{
+    let av=a[state.sortCol], bv=b[state.sortCol];
+    if(state.sortCol==='month'||state.sortCol==='year') { av=parseInt(av); bv=parseInt(bv); }
+    if(av<bv) return -1*state.sortDir;
+    if(av>bv) return  1*state.sortDir;
+    return 0;
+  });
+
+  const total = data.length;
+  const pages = Math.ceil(total/state.pageSize)||1;
+  const page  = Math.min(state.currentPage, pages);
+  const slice = data.slice((page-1)*state.pageSize, page*state.pageSize);
+
+  return `
+    <div class="table-section">
+      <div class="table-header">
+        <div class="th-title">
+          ${state.month ? `📅 ${MONTHS_ID[state.month-1]} ${state.year}` : `🗂️ Semua Schedule ${state.year}`}
+          <span style="font-size:11px;font-weight:400;color:var(--text3);margin-left:6px">(${total} item)</span>
+        </div>
+        <div class="search-box">
+          🔍<input placeholder="Cari site / toko..." value="${state.searchQ}"
+            oninput="state.searchQ=this.value;state.currentPage=1;renderView()"/>
+        </div>
+        <select class="filter-sel" onchange="state.filterStatus=this.value;state.currentPage=1;renderView()">
+          <option value="">Semua Status</option>
+          <option value="SCHEDULED" ${state.filterStatus==='SCHEDULED'?'selected':''}>SCHEDULED</option>
+          <option value="COMPLETED" ${state.filterStatus==='COMPLETED'?'selected':''}>COMPLETED</option>
+          <option value="CANCELLED" ${state.filterStatus==='CANCELLED'?'selected':''}>CANCELLED</option>
+          <option value="PENDING"   ${state.filterStatus==='PENDING'  ?'selected':''}>PENDING</option>
+        </select>
+        ${GAS_URL?`<button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ Export CSV</button>`:''}
+      </div>
+      <div class="table-wrap">
+        ${slice.length===0 ? `<div class="empty-state">
+          <div class="es-icon">📭</div>
+          <div class="es-title">Belum ada schedule</div>
+          <div class="es-sub">Gunakan tombol <strong>Tambah</strong> atau <strong>Auto Generate</strong></div>
+        </div>` : `
+        <table>
+          <thead><tr>
+            <th>#</th>
+            <th class="sortable" onclick="sortBy('site')">Site ${sortIcon('site')}</th>
+            <th>Nama Toko</th>
+            <th class="sortable" onclick="sortBy('month')">Bulan ${sortIcon('month')}</th>
+            <th>Tgl SO</th>
+            <th>Status</th>
+            <th>Catatan</th>
+            <th>Aksi</th>
+          </tr></thead>
+          <tbody>
+            ${slice.map((r,i)=>`
+            <tr>
+              <td style="color:var(--text3);font-family:'DM Mono',monospace;font-size:11px">${(page-1)*state.pageSize+i+1}</td>
+              <td><span class="site-code">${r.site}</span></td>
+              <td class="store-name">${r.storeName}</td>
+              <td style="font-family:'DM Mono',monospace">${MONTHS_ID[parseInt(r.month)-1]||r.month}</td>
+              <td style="font-family:'DM Mono',monospace;font-size:11px">${r.soDate||'—'}</td>
+              <td><span class="status-badge st-${r.status}">${r.status}</span></td>
+              <td style="color:var(--text3);font-size:11.5px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.notes||'—'}</td>
+              <td>
+                <div class="action-btns">
+                  <div class="icon-btn" title="Edit" onclick="openEditModal(${JSON.stringify(r).replace(/'/g,"&apos;")})">✏️</div>
+                  <div class="icon-btn done" title="Tandai Selesai" onclick="markDone('${r.id}')">✅</div>
+                  <div class="icon-btn del"  title="Hapus" onclick="confirmDelete('${r.id}','${r.site}')">🗑️</div>
+                </div>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>`}
+      </div>
+      <div class="table-footer">
+        <span>Menampilkan ${Math.min(slice.length,state.pageSize)} dari ${total} schedule</span>
+        <div class="pagination">
+          <div class="pg-btn" onclick="goPage(1)" ${page<=1?'disabled':''}>«</div>
+          <div class="pg-btn" onclick="goPage(${page-1})" ${page<=1?'disabled':''}>‹</div>
+          ${renderPageNumbers(page,pages)}
+          <div class="pg-btn" onclick="goPage(${page+1})" ${page>=pages?'disabled':''}>›</div>
+          <div class="pg-btn" onclick="goPage(${pages})" ${page>=pages?'disabled':''}>»</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderPageNumbers(cur, total) {
+  let html='', start=Math.max(1,cur-2), end=Math.min(total,cur+2);
+  for(let i=start;i<=end;i++){
+    html+=`<div class="pg-btn ${i===cur?'active':''}" onclick="goPage(${i})">${i}</div>`;
+  }
+  return html;
+}
+function sortBy(col){
+  if(state.sortCol===col) state.sortDir*=-1; else { state.sortCol=col; state.sortDir=1; }
+  renderView();
+}
+function sortIcon(col){
+  if(state.sortCol!==col) return '<span style="color:var(--text3)">⇅</span>';
+  return state.sortDir===1?'↑':'↓';
+}
+function goPage(p){ state.currentPage=p; renderView(); }
+
+/* ── SITES VIEW ───────────────────────────────────── */
+function renderSitesView() {
+  const list = ALL_SITES;
+  const cats = [...new Set(list.map(s=>s[2]))].filter(Boolean).sort();
+  let q = state.searchQ.toLowerCase();
+  let filtered = list.filter(s=>{
+    if(state.filterCat && s[2]!==state.filterCat) return false;
+    if(q && !s[0].toLowerCase().includes(q) && !s[1].toLowerCase().includes(q)) return false;
+    return true;
+  });
+  const pages=Math.ceil(filtered.length/state.pageSize)||1;
+  const page=Math.min(state.currentPage,pages);
+  const slice=filtered.slice((page-1)*state.pageSize,page*state.pageSize);
+
+  return `
+    <div class="table-section">
+      <div class="table-header">
+        <div class="th-title">🏪 Daftar Toko (${filtered.length}/${list.length})</div>
+        <div class="search-box">🔍<input placeholder="Cari..." value="${state.searchQ}"
+          oninput="state.searchQ=this.value;state.currentPage=1;renderView()"/></div>
+        <select class="filter-sel" onchange="state.filterCat=this.value;state.currentPage=1;renderView()">
+          <option value="">Semua Kategori</option>
+          ${cats.map(c=>`<option value="${c}" ${state.filterCat===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>#</th><th>Site</th><th>Nama Toko</th><th>Kategori</th><th>Aksi</th>
+          </tr></thead>
+          <tbody>
+            ${slice.map((s,i)=>{
+              const col=CAT_COLORS[s[2]]||CAT_COLORS.DEFAULT;
+              return `<tr>
+                <td style="color:var(--text3);font-family:'DM Mono',monospace;font-size:11px">${(page-1)*state.pageSize+i+1}</td>
+                <td><span class="site-code">${s[0]}</span></td>
+                <td class="store-name">${s[1]}</td>
+                <td><span class="cat-badge" style="background:${col}20;color:${col}">${s[2]||'—'}</span></td>
+                <td>
+                  <button class="btn btn-ghost btn-sm" onclick="quickAddFromSite('${s[0]}','${s[1].replace(/'/g,"\\'")}')">＋ Jadwalkan</button>
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <span>${filtered.length} toko ditemukan</span>
+        <div class="pagination">
+          <div class="pg-btn" onclick="goPage(1)" ${page<=1?'disabled':''}>«</div>
+          <div class="pg-btn" onclick="goPage(${page-1})" ${page<=1?'disabled':''}>‹</div>
+          ${renderPageNumbers(page,pages)}
+          <div class="pg-btn" onclick="goPage(${page+1})" ${page>=pages?'disabled':''}>›</div>
+          <div class="pg-btn" onclick="goPage(${pages})" ${page>=pages?'disabled':''}>»</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ── CONFIG BANNER ────────────────────────────────── */
+function renderConfigBanner() {
+  return `<div class="config-banner">
+    <div class="cb-icon">⚙️</div>
+    <div class="cb-text">
+      <strong>Hubungkan ke Google Apps Script</strong>
+      <span>Tempel URL Web App GAS Anda di bawah, lalu tekan Enter untuk menyimpan koneksi</span>
+    </div>
+    <input class="cb-input" id="gas-url-input" placeholder="https://script.google.com/macros/s/..."
+      value="${GAS_URL}"
+      onkeydown="if(event.key==='Enter'){saveGasUrl()}"
+    />
+    <button class="btn btn-gold btn-sm" onclick="saveGasUrl()">Simpan & Reload</button>
+  </div>`;
+}
+function showConfigBanner() {}
+function saveGasUrl() {
+  const v = document.getElementById('gas-url-input')?.value?.trim();
+  if(!v) return toast('URL tidak boleh kosong','error');
+  GAS_URL = v;
+  localStorage.setItem('gas_url', v);
+  toast('URL disimpan! Menghubungkan...','success');
+  setTimeout(()=>location.reload(), 1000);
+}
+
+/* ── MODAL HELPERS ────────────────────────────────── */
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+function openAddModal() {
+  state.editMode = false;
+  document.getElementById('modal-add-title').textContent = '➕ Tambah Schedule';
+  document.getElementById('edit-id').value = '';
+  document.getElementById('add-site').value = '';
+  document.getElementById('add-store').value = '';
+  document.getElementById('add-month').value = state.month || 1;
+  document.getElementById('add-year').value = state.year;
+  document.getElementById('add-date').value = '';
+  document.getElementById('add-status').value = 'SCHEDULED';
+  document.getElementById('add-notes').value = '';
+  openModal('modal-add');
+}
+
+function openEditModal(r) {
+  if(typeof r==='string') r=JSON.parse(r);
+  state.editMode = true;
+  document.getElementById('modal-add-title').textContent = '✏️ Edit Schedule';
+  document.getElementById('edit-id').value = r.id;
+  document.getElementById('add-site').value = r.site;
+  document.getElementById('add-store').value = r.storeName;
+  document.getElementById('add-month').value = r.month;
+  document.getElementById('add-year').value = r.year;
+  document.getElementById('add-date').value = r.soDate||'';
+  document.getElementById('add-status').value = r.status||'SCHEDULED';
+  document.getElementById('add-notes').value = r.notes||'';
+  openModal('modal-add');
+}
+
+function quickAddFromSite(site, storeName) {
+  openAddModal();
+  document.getElementById('add-site').value = site;
+  document.getElementById('add-store').value = storeName;
+}
+
+function openAutoGenModal() {
+  document.getElementById('gen-year').value = state.year;
+  openModal('modal-auto');
+}
+
+/* ── SUBMIT SCHEDULE ──────────────────────────────── */
+async function submitSchedule() {
+  const site      = document.getElementById('add-site').value;
+  const storeName = document.getElementById('add-store').value;
+  const month     = document.getElementById('add-month').value;
+  const year      = document.getElementById('add-year').value;
+  const soDate    = document.getElementById('add-date').value;
+  const status    = document.getElementById('add-status').value;
+  const notes     = document.getElementById('add-notes').value;
+  const id        = document.getElementById('edit-id').value;
+
+  if(!site||!month||!year) return toast('Lengkapi Site, Bulan, dan Tahun','error');
+
+  const body = { site, storeName, month:parseInt(month), year:parseInt(year), soDate, status, notes };
+
+  if(GAS_URL) {
+    showLoading('Menyimpan...');
+    try {
+      const action = state.editMode ? 'updateSchedule' : 'saveSchedule';
+      if(state.editMode) body.id = id;
+      const d = await apiPost({action,...body});
+      hideLoading();
+      if(d.success) { toast(d.message,'success'); closeModal('modal-add'); await refresh(); }
+      else toast(d.error||'Gagal menyimpan','error');
+    } catch(e){ hideLoading(); toast('Error: '+e.message,'error'); }
+  } else {
+    // Demo mode: local state
+    if(state.editMode) {
+      const idx = state.schedules.findIndex(s=>s.id===id);
+      if(idx>=0) Object.assign(state.schedules[idx], body);
+    } else {
+      state.schedules.push({id:'LOCAL-'+Date.now(),...body, createdAt:'', updatedAt:''});
+    }
+    updateMonthSummary(); updateBadges();
+    toast('Disimpan (mode demo)','success');
+    closeModal('modal-add');
+    renderView();
+  }
+}
+
+/* ── AUTO GENERATE ────────────────────────────────── */
+async function submitAutoGenerate() {
+  const year     = parseInt(document.getElementById('gen-year').value);
+  const perMonth = parseInt(document.getElementById('gen-per-month').value)||15;
+
+  if(GAS_URL) {
+    showLoading('Auto-generating schedules...');
+    try {
+      const d = await apiPost({action:'autoGenerate', year, sitesPerMonth:perMonth});
+      hideLoading();
+      if(d.success) { toast(d.message,'success'); closeModal('modal-auto'); await refresh(); }
+      else toast(d.error||'Gagal','error');
+    } catch(e){ hideLoading(); toast('Error: '+e.message,'error'); }
+  } else {
+    // Demo mode
+    const demo=[];
+    ALL_SITES.forEach((s,i)=>{
+      const m=(i%12)+1;
+      demo.push({
+        id:'GEN-'+Date.now()+'-'+i,
+        site:s[0], storeName:s[1], month:m, year,
+        soDate:`${year}-${String(m).padStart(2,'0')}-${String(15+Math.floor(Math.random()*5)).padStart(2,'0')}`,
+        status:'SCHEDULED', notes:'Auto-generated', createdAt:'', updatedAt:''
+      });
+    });
+    state.schedules = [...state.schedules, ...demo];
+    updateMonthSummary(); updateBadges();
+    toast(`${demo.length} schedule berhasil dibuat (mode demo)`,'success');
+    closeModal('modal-auto');
+    renderView();
+  }
+}
+
+/* ── DELETE ───────────────────────────────────────── */
+function confirmDelete(id, site) {
+  if(!confirm(`Hapus schedule "${site}" (${id})?`)) return;
+  deleteSchedule(id);
+}
+async function deleteSchedule(id) {
+  if(GAS_URL) {
+    showLoading('Menghapus...');
+    try {
+      const d = await apiPost({action:'deleteSchedule',id});
+      hideLoading();
+      if(d.success){ toast(d.message,'success'); await refresh(); }
+      else toast(d.error||'Gagal','error');
+    } catch(e){ hideLoading(); toast('Error','error'); }
+  } else {
+    state.schedules = state.schedules.filter(s=>s.id!==id);
+    updateMonthSummary(); updateBadges();
+    toast('Dihapus (demo)','success');
+    renderView();
+  }
+}
+
+/* ── MARK DONE ────────────────────────────────────── */
+async function markDone(id) {
+  if(GAS_URL) {
+    showLoading('Memperbarui...');
+    try {
+      const d = await apiPost({action:'updateSchedule',id,status:'COMPLETED'});
+      hideLoading();
+      if(d.success){ toast('Status diubah ke COMPLETED','success'); await refresh(); }
+      else toast(d.error,'error');
+    } catch(e){ hideLoading(); toast('Error','error'); }
+  } else {
+    const s = state.schedules.find(s=>s.id===id);
+    if(s) s.status='COMPLETED';
+    updateMonthSummary(); updateBadges();
+    toast('Status diubah ke COMPLETED (demo)','success');
+    renderView();
+  }
+}
+
+/* ── EXPORT CSV ───────────────────────────────────── */
+function exportCSV() {
+  const params = new URLSearchParams({action:'exportSchedule',year:state.year});
+  if(state.month) params.set('month',state.month);
+  window.open(`${GAS_URL}?${params.toString()}`,'_blank');
+}
+
+/* ── REFRESH ──────────────────────────────────────── */
+async function refresh() {
+  showLoading('Memperbarui...');
+  await loadDashboard();
+  await loadSchedules();
+  hideLoading();
+  renderView();
+}
+
+/* ── YEAR CHANGE ──────────────────────────────────── */
+async function onYearChange() {
+  state.year = parseInt(document.getElementById('year-sel').value);
+  document.getElementById('gen-year').value = state.year;
+  document.getElementById('add-year').value = state.year;
+  if(GAS_URL) await refresh(); else { loadDemoData(); renderView(); }
+}
+
+/* ── LOADING / TOAST ──────────────────────────────── */
+function showLoading(msg='Memuat...') {
+  document.getElementById('loading-text').textContent = msg;
+  document.getElementById('loading').classList.add('show');
+}
+function hideLoading() { document.getElementById('loading').classList.remove('show'); }
+
+function toast(msg, type='success') {
+  const icons = {success:'✅', error:'❌', warning:'⚠️', info:'ℹ️'};
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span class="toast-msg">${msg}</span>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>el.remove(), 4000);
+}
+
+/* ── SITES DATA (embedded) ────────────────────────── */
+const ALL_SITES = [
+  ["LG01","PIM 1 LEAGUE","LEAGUE"],
+  ["LG05","PURI INDAH MALL SPORTINDO","LEAGUE"],
+  ["LG06","LEAGUE PRJ GAMBIR 2","LEAGUE"],
+  ["LG07","HALL D LUAR","LEAGUE"],
+  ["LG08","HALL B SELASAR","LEAGUE"],
+  ["LG09","GPN 3 SUPER SALE","LEAGUE"],
+  ["LG11","LEAGUE PRJ GAMBIR 1","LEAGUE"],
+  ["LG14","GPN 1 LEAGUE","LEAGUE"],
+  ["LG18","PIM 2 LEAGUE (PROJECT)","LEAGUE"],
+  ["LG20","GRAND CITY SPORTINDO","LEAGUE"],
+  ["LG30","CIKINI MEGASTORE SPORTINDO","LEAGUE"],
+  ["GL01","GGPI SPORTINDO GOLF","GOLF"],
+  ["GL02","CLUB HOUSE SPORTINDO GOLF","GOLF"],
+  ["LG12","LEAGUE PRJ GAMBIR 3","LEAGUE"],
+  ["LG13","LEAGUE PRJ GAMBIR 4","LEAGUE"],
+  ["LG16","SKA MALL PEKANBARU SPORTINDO","LEAGUE"],
+  ["LG23","HALL C LEAGUE","LEAGUE"],
+  ["LG24","HALL D DALAM","LEAGUE"],
+  ["LG25","HALL A SELASAR","LEAGUE"],
+  ["LG26","OPEN SPACE","LEAGUE"],
+  ["LG27","PRJ SURABAYA","LEAGUE"],
+  ["LG32","GPN 3 CONSIGNMENT","LEAGUE"],
+  ["LG33","GRAND CITY LEAGUE ACTIFIT","LEAGUE"],
+  ["LG35","HUB BALI","HUB"],
+  ["LG36","HUB BSD TANGERANG","HUB"],
+  ["LG37","HUB MAKASSAR","HUB"],
+  ["LG38","HUB MALANG","HUB"],
+  ["LG39","HUB JOGJA","HUB"],
+  ["LG40","HUB PALEMBANG","HUB"],
+  ["LG41","LEAGUE PIM 3","LEAGUE"],
+  ["LG44","HUB SAMARINDA","HUB"],
+  ["LG45","HUB PEKANBARU","HUB"],
+  ["CH01","CHANDRA LAMPUNG","CHANDRA"],
+  ["CH02","CHANDRA PRINGSEWU LAMPUNG","CHANDRA"],
+  ["CH03","CHANDRA METRO","CHANDRA"],
+  ["CI05","CITRUS GREEN PRAMUKA SQUARE","CITRUS"],
+  ["ECGN","ECOM STORAGE ON GPN3","ECOM"],
+  ["M101","ONLINE - LEAGUE PIM 1","ONLINE"],
+  ["M105","ONLINE - LEAGUE PURI INDAH","ONLINE"],
+  ["M109","ONLINE - SPORTINDO GPN3SS","ONLINE"],
+  ["M114","ONLINE - LEAGUE GPN 1","ONLINE"],
+  ["M120","ONLINE - SPORTINDO GCM","ONLINE"],
+  ["M130","ONLINE - CIKINI MEGASTORE","ONLINE"],
+  ["M133","ONLINE - ACTIFIT GC","ONLINE"],
+  ["M135","ONLINE - HUB BALI","ONLINE"],
+  ["M137","ONLINE - HUB MAKASSAR","ONLINE"],
+  ["M138","ONLINE - HUB MALANG","ONLINE"],
+  ["M139","ONLINE - HUB JOGJA","ONLINE"],
+  ["M141","ONLINE - LEAGUE PIM3","ONLINE"],
+  ["M144","ONLINE - HUB SAMARINDA","ONLINE"],
+  ["M145","ONLINE - HUB PEKANBARU","ONLINE"],
+  ["M1G1","ONLINE - GGPI","ONLINE"],
+  ["M201","LEAGUE PIM 1 - BUSINESS","BUSINESS"],
+  ["M209","GPN3SS - BUSINESS","BUSINESS"],
+  ["M214","GPN1 LEAGUE - BUSINESS","BUSINESS"],
+  ["M220","SPORTINDO GCM - BUSINESS","BUSINESS"],
+  ["M230","MEGASTORE - BUSINESS","BUSINESS"],
+  ["M233","ACTIFIT GCM - BUSINESS","BUSINESS"],
+  ["M235","HUB BALI - BUSINESS","BUSINESS"],
+  ["M236","HUB BSD - BUSINESS","BUSINESS"],
+  ["M237","HUB MAKASSAR - BUSINESS","BUSINESS"],
+  ["M238","HUB MALANG - BUSINESS","BUSINESS"],
+  ["M239","HUB JOGJA - BUSINESS","BUSINESS"],
+  ["M240","HUB PALEMBANG - BUSINESS","BUSINESS"],
+  ["M241","LEAGUE PIM 3 - BUSINESS","BUSINESS"],
+  ["M537","B GRADE - HUB MAKASSAR","B-GRADE"],
+  ["M538","B GRADE - HUB MALANG","B-GRADE"],
+  ["M539","B GRADE - HUB JOGJA","B-GRADE"],
+  ["M540","B GRADE - HUB PALEMBANG","B-GRADE"],
+  ["M705","UNSALEABLE - PURI INDAH MALL","UNSALEABLE"],
+  ["M709","UNSALEABLE - GPN 3 SS","UNSALEABLE"],
+  ["M735","UNSALEABLE - HUB BALI","UNSALEABLE"],
+  ["M736","UNSALEABLE - HUB BSD TANGERANG","UNSALEABLE"],
+  ["M737","UNSALEABLE - HUB MAKASSAR","UNSALEABLE"],
+  ["M739","UNSALEABLE - HUB JOGJA","UNSALEABLE"],
+  ["M740","UNSALEABLE - HUB PALEMBANG","UNSALEABLE"],
+  ["M741","UNSALEABLE - LEAGUE PIM 3","UNSALEABLE"],
+  ["M744","UNSALEABLE - HUB SAMARINDA","UNSALEABLE"],
+  ["M745","UNSALEABLE - HUB PEKANBARU","UNSALEABLE"],
+  ["M7K1","UNSALEABLE - JO HUB MEDAN","UNSALEABLE"],
+  ["M7P1","UNSALEABLE - JO HUB MANADO","UNSALEABLE"],
+  ["M920","DOCONLY - SPORTINDO GC","DOCONLY"],
+  ["ME01","PT. MEGA DEPT STORE","EXTERNAL"],
+  ["MR02","THE GRAND PALACE","EXTERNAL"],
+  ["PR01","PRIMA MALL JAMBI","EXTERNAL"],
+  ["ST03","STAR SUMMARECON BEKASI","EXTERNAL"],
+  ["X130","TM-LG30 CAHAYA SPORT","TM"],
+  ["X135","TM-LG35 KAWAN SPORT GATSU","TM"],
+  ["X137","TM-LG37 MISS SPORT","TM"],
+  ["X139","TM-LG39 MAMA SPORTS","TM"],
+  ["X220","TM-LG20 JUARA SPORTS","TM"],
+  ["X235","TM-LG35 KAWAN SPORT TABANAN","TM"],
+  ["X241","TM-LG41 TOPSCORE DEPOK","TM"],
+  ["X330","TM-LG30 BRANDON SPORT BEKASI","TM"],
+  ["X333","TM-LG33 KOP POMDAM V","TM"],
+  ["X335","TM-LG35 KAWAN SPORT GIANYAR","TM"],
+  ["X336","TM-LG36 TOKO SPORTAWAY","TM"],
+  ["X337","TM-LG37 KOPERASI KODIM 1409","TM"],
+  ["X341","TM-LG41 TOPSCORE JAKTIM","TM"],
+  ["X430","TM-LG30 BRANDON SPORT BOGOR","TM"],
+  ["X433","TM-LG33 SNEAKER ZONE","TM"],
+  ["X436","TM-LG36 BIG SPORT TANGERANG","TM"],
+  ["X437","TM-LG37 SPORT 88","TM"],
+  ["X438","TM-LG38 TOKO AKBAR","TM"],
+  ["X439","TM-LG39 PG ADISUTJIPTO","TM"],
+  ["X440","TM-LG40 ONUR SPORT","TM"],
+  ["X530","TM-LG30 JAKCLOTH JAGAKARSA","TM"],
+  ["X536","TM-LG36 BIG SPORT SERANG","TM"],
+  ["X537","TM-LG37 KOPYON RAIDER 700","TM"],
+  ["X539","TM-LG39 CARI SEPATU","TM"],
+  ["X540","TM-LG40 SINAR JAYA SPORT","TM"],
+  ["X630","TM-LG30 SHIPPER PS.MINGGU","TM"],
+  ["X636","TM-LG36 BIG SPORT CIKARANG","TM"],
+  ["X730","TM-LG30 SHIPPER CITY WALK","TM"],
+  ["X736","TM-LG36 JAKCLOTH BINTARO","TM"],
+  ["X820","TM-LG20 DHANI SPORT","TM"],
+  ["X830","TM-LG30 SHIPPER PULOGADUNG","TM"],
+  ["X836","TM-LG36 JAKCLOTH KARAWACI","TM"],
+  ["X920","TM-LG20 KOP BRIG 2 MARINIR","TM"],
+  ["X936","TM-LG36 CHAMPION SPORT","TM"],
+  ["XA36","TM-LG36 MIKASA SPORT","TM"],
+  ["XC20","TM-LG20 MIYOSHI","TM"],
+  ["ZM01","BAZZAR SARINAH THAMRIN","BAZZAR"],
+  ["ZM02","BAZZAR SARINAH MALANG","BAZZAR"],
+  ["ZM03","BAZZAR KCIC","BAZZAR"],
+  ["ZM04","KLIK & COLLLECT TOKOPEDIA","BAZZAR"],
+  ["ZM05","BAZZAR MM LEAGUE - 05","BAZZAR"],
+  ["ZM09","GRABE PURI","BAZZAR"],
+  ["ZM10","GRABE YOGYA","BAZZAR"],
+  ["ZM11","GRAMEDIA ROYAL","GRAMEDIA"],
+  ["ZM12","GRAMEDIA TP","GRAMEDIA"],
+  ["ZM13","GRAMEDIA TP BAZAR","GRAMEDIA"],
+  ["ZM14","BAZZAR MM LEAGUE - 14","BAZZAR"],
+  ["ZM29","CIKUPA ECO PLAZA CITRA RAYA","BAZZAR"],
+  ["O101","LEAGUE JO HUB MEDAN","JO-HUB"],
+  ["O102","LEAGUE JO HUB PEKANBARU","JO-HUB"],
+  ["O103","LEAGUE JO HUB SAMARINDA","JO-HUB"],
+  ["O104","LEAGUE JO HUB SEMARANG","JO-HUB"],
+  ["O201","LEAGUE JO HUB MANADO","JO-HUB"],
+  ["O202","LEAGUE JO HUB BUOL","JO-HUB"],
+  ["O301","LEAGUE JO HUB NUNUKAN","JO-HUB"],
+  ["OP01","ALTRAK 78","EXTERNAL"],
+  ["ZS01","JACKCLOTH JAKARTA","JACKCLOTH"],
+  ["ZS03","BAZZAR TRADE MALL KOJA","BAZZAR"],
+  ["ZS04","BAZAAR TAMAN LAMANDAU","BAZZAR"],
+  ["ZS07","BAZZAR HSC","BAZZAR"],
+  ["ZS11","BAZAAR RI FEST","BAZZAR"],
+  ["ZS13","MALL TAMAN PALEM","EXTERNAL"],
+  ["ZS14","BAZZAR MEGAMALL BEKASI","BAZZAR"],
+  ["ZS15","BAZZAR CISAUK","BAZZAR"],
+  ["ZS16","BAZAAR BIGBANG HALL A","BAZZAR"],
+  ["ZS17","BAZZAR BUARAN PLAZA","BAZZAR"],
+  ["ZS18","JATIM FAIR LUAR","BAZZAR"],
+  ["ZS19","BRI FEST RAMADHAN","BAZZAR"],
+  ["ZS20","JAKCLOTH ITC DEPOK","JACKCLOTH"],
+  ["ZS21","JAKCLOTH JCC SENAYAN","JACKCLOTH"],
+  ["ZS22","JAKCLOTH KHI OUTDOOR","JACKCLOTH"],
+  ["ZS24","JAKCLOTH LAP A.YANI","JACKCLOTH"],
+  ["ZS25","JAKCLOTH MTC MAL PANAM","JACKCLOTH"],
+  ["ZS26","EVENT BAZZAR ISAW","BAZZAR"],
+  ["ZS27","JACKLOTH SUMMER FEST","JACKCLOTH"],
+  ["ZS29","JAKCLOTH ECO PLAZA CITRA RAYA","JACKCLOTH"],
+  ["ZS37","BAZZAR HUB MAKASSAR","BAZZAR"],
+  ["GNDC","E-COMM","ECOM"],
+  ["ZM37","BAZAAR IHLS 1","BAZZAR"],
+  ["TO04","TEMU OUTLET BASURA MALL","EXTERNAL"],
+  ["MS01","SHIPPER FOOD CENTRUM","SHIPPER"],
+  ["MS03","SHIPPER AEON BSD","SHIPPER"],
+  ["MS08","SHIPPER MALL KALIBATA","SHIPPER"],
+  ["ZM36","SHIPPER KUNINGAN CITY","SHIPPER"],
+  ["MS07","SHIPPER AEON TJ.BARAT","SHIPPER"],
+  ["MS06","SHIPPER PULOGADUNG","SHIPPER"],
+  ["CI06","CITRUS DMALL DEPOK","CITRUS"],
+  ["ZM06","GRAMEDIA MATRAMAN","GRAMEDIA"]
+];
+
+// ── BOOT ────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
