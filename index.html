@@ -788,6 +788,7 @@ async function init() {
   loadDashboard(),
   loadSchedules(),
   loadSites()
+]);
   } catch(e) {
     toast('Gagal terhubung ke GAS. Mode demo aktif.','warning');
     loadDemoData();
